@@ -5,7 +5,7 @@ import {cities,filterAnimals,canTransition,ageLabel} from '../src/domain.mjs';
 test('18 animais distintos, seis por município sergipano, sem dados reais',()=>{
  assert.equal(animals.length,18);assert.equal(new Set(animals.map(a=>a.id)).size,18);
  for(const city of cities){const local=animals.filter(a=>a.city===city);assert.equal(local.length,6);assert.equal(local.filter(a=>a.species==='Cão').length,3);assert.equal(local.filter(a=>a.species==='Gato').length,3);}
- assert.ok(animals.every(a=>a.state==='SE'&&a.demo&&a.photos.length&&a.description.includes('fictício')));
+ assert.ok(animals.every(a=>a.state==='SE'&&a.demo&&a.photos.length&&a.description.length>=15));
 });
 test('filtros combinados e limites de idade',()=>{
  assert.equal(filterAnimals(animals,{city:'Itabaiana'}).length,6);

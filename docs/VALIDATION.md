@@ -2,10 +2,10 @@
 
 ## Demonstração local
 
-1. Abra Explorar e apresente a identificação de ambiente demonstrativo.
+1. Abra Explorar e confirme que os cartões e a descoberta não exibem badge ou faixa de demonstração.
 2. Filtre Aracaju, Areia Branca e Itabaiana; cada município começa com seis animais.
 3. Combine espécie, porte, faixa etária e raça. Limpe os filtros.
-4. Abra um cartão e confira características, imagem e aviso de anúncio fictício.
+4. Abra um cartão e confira características, imagem e a observação discreta sobre a foto ilustrativa.
 5. Entre por Perfil → Experimentar demonstração. Favorite um animal e confira Favoritos.
 6. Envie um pedido com contato fictício e justificativa. Confira Pedidos e Notificações.
 7. Recarregue a página; entre novamente na demonstração e confirme a persistência local.

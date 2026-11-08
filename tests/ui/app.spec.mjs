@@ -3,6 +3,8 @@ test('descoberta, municípios e adoção demonstrativa persistente',async({page}
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/');
  await expect(page.getByText('18 histórias para conhecer')).toBeVisible();
+ await expect(page.getByText('DEMONSTRAÇÃO',{exact:true})).toHaveCount(0);
+ await expect(page.getByText('Ambiente demonstrativo · animais e responsáveis fictícios de Sergipe')).toHaveCount(0);
  for(const city of ['Aracaju','Areia Branca','Itabaiana']){
   await page.getByRole('button',{name:city,exact:true}).click();
   await expect(page.getByText('6 histórias para conhecer')).toBeVisible();

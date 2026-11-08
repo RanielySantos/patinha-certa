@@ -6,8 +6,12 @@
 - Aplicação web: https://ranielysantos.github.io/patinha-certa/
 - Supabase: https://supabase.com/dashboard/project/jcrafbthmwylzryujkyv
 - Expo: https://expo.dev/accounts/ranielys/projects/patinha-certa
-- Downloads e versões: https://github.com/RanielySantos/patinha-certa/releases/tag/v1.0.0
-- APK Android: https://github.com/RanielySantos/patinha-certa/releases/download/v1.0.0/patinha-certa-v1.0.0.apk
+- Downloads e versões: https://github.com/RanielySantos/patinha-certa/releases/tag/v1.0.1
+- APK Android: https://github.com/RanielySantos/patinha-certa/releases/download/v1.0.1/patinha-certa-v1.0.1.apk
+
+A versão 1.0.1 remove a identificação visual de demonstração dos cartões e da descoberta. Os registros de exemplo continuam identificados internamente e documentados. O Android utiliza `versionCode` 2 e a assinatura existente para permitir atualização da instalação 1.0.0.
+
+### Histórico do build 1.0.0
 
 O build Android `024bb849-2e90-495b-9c3a-369a14fa1425` foi concluído no Expo, com versão `1.0.0` e pacote `br.com.patinhacerta.app`. O código nativo desse build corresponde ao commit `f311634`; os commits seguintes registram a correção específica da exportação web, configuração de callbacks e documentação. O APK utiliza as variáveis públicas do ambiente `preview` conectadas ao Supabase.
 
