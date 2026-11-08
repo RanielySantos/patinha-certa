@@ -1,0 +1,8 @@
+project_id = "patinha-certa"
+
+[auth]
+site_url = "https://ranielysantos.github.io/patinha-certa/"
+additional_redirect_urls = ["https://ranielysantos.github.io/patinha-certa/auth/callback", "https://ranielysantos.github.io/patinha-certa/auth/callback?recovery=1", "patinhacerta://auth/callback", "patinhacerta://auth/callback?recovery=1", "http://localhost:8081/auth/callback", "http://localhost:8081/auth/callback?recovery=1"]
+
+[auth.email]
+enable_confirmations = true
