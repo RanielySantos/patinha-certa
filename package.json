@@ -37,6 +37,7 @@
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.15",
     "@playwright/test": "^1.65.0",
-    "eas-cli": "^27.5.0"
+    "eas-cli": "^27.5.0",
+    "typescript": "5.9.3"
   }
 }
