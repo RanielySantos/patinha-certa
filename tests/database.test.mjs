@@ -1,0 +1,40 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {PGlite} from '@electric-sql/pglite';
+const admin='10000000-0000-4000-8000-000000000001',u1='10000000-0000-4000-8000-000000000002',u2='10000000-0000-4000-8000-000000000003';
+const animal='00000000-0000-4000-8000-000000000001';
+test('PostgreSQL: migração, RLS, duplicidade, aprovação e notificações',async()=>{
+ const db=new PGlite();
+ try{
+ await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,raw_user_meta_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid; $$;grant usage on schema auth to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text);alter table storage.objects enable row level security;create function storage.foldername(text) returns text[] language sql as $$ select string_to_array($1,'/'); $$;create publication supabase_realtime;`);
+ await db.exec(readFileSync(new URL('../supabase/migrations/202611080001_initial.sql',import.meta.url),'utf8'));
+ await db.exec(readFileSync(new URL('../supabase/seed.sql',import.meta.url),'utf8'));
+ await db.exec(`insert into auth.users(id,raw_user_meta_data) values('${admin}','{"name":"Admin"}'),('${u1}','{"name":"Um","role":"admin"}'),('${u2}','{"name":"Dois"}');update profiles set role='admin' where id='${admin}';`);
+ assert.equal((await db.query('select count(*)::int n from animals')).rows[0].n,18);
+ assert.equal((await db.query(`select role from profiles where id='${u1}'`)).rows[0].role,'adopter');
+ async function login(id){await db.exec(`reset role;set request.jwt.claim.sub='${id}';set role authenticated;`);}
+ await login(u1);
+ assert.equal((await db.query('select count(*)::int n from profiles')).rows[0].n,1);
+ await assert.rejects(db.query(`update profiles set role='admin' where id='${u1}'`),/permission denied/);
+ await assert.rejects(db.query(`insert into adoption_requests(user_id,animal_id,contact,reason) values('${u1}','${animal}','teste','motivo suficientemente longo')`),/permission denied/);
+ const r1=(await db.query('select submit_adoption($1,$2,$3) id',[animal,'contato fictício','Tenho espaço e tempo para cuidar.'])).rows[0].id;
+ await assert.rejects(db.query('select submit_adoption($1,$2,$3)',[animal,'contato fictício','Tenho espaço e tempo para cuidar.']),/pedido ativo/);
+ await assert.rejects(db.query('select transition_adoption($1,$2)',[r1,'approved']),/administrativo/);
+ await login(u2);assert.equal((await db.query('select * from adoption_requests')).rows.length,0);
+ await assert.rejects(db.query('select transition_adoption($1,$2)',[r1,'cancelled']),/seus pedidos/);
+ const r2=(await db.query('select submit_adoption($1,$2,$3) id',[animal,'outro contato','Também tenho condições de cuidar.'])).rows[0].id;
+ await login(admin);
+ const decisions=await Promise.allSettled([db.query('select transition_adoption($1,$2)',[r1,'approved']),db.query('select transition_adoption($1,$2)',[r2,'approved'])]);
+ assert.equal(decisions.filter(d=>d.status==='fulfilled').length,1);
+ assert.equal((await db.query(`select count(*)::int n from adoption_requests where animal_id=$1 and status='approved'`,[animal])).rows[0].n,1);
+ assert.equal((await db.query(`select status from adoption_requests where id=$1`,[r2])).rows[0].status,'rejected');
+ assert.equal((await db.query('select status from animals where id=$1',[animal])).rows[0].status,'adopted');
+ await login(u2);assert.ok((await db.query('select message from notifications')).rows.some(n=>n.message.includes('outro lar')));
+ await assert.rejects(db.query(`update notifications set message='alterada'`),/permission denied/);
+ await db.query('update notifications set read=true');
+ await assert.rejects(db.query('select submit_adoption($1,$2,$3)',[animal,'contato fictício','Tenho condições de cuidar.']),/disponível/);
+ await db.exec("reset role;set request.jwt.claim.sub='';set role anon;");assert.equal((await db.query('select * from animals')).rows.length,17);
+ await assert.rejects(db.query('select * from adoption_requests'),/permission denied/);
+ }finally{await db.close();}
+});
