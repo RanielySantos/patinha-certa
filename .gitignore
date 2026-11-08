@@ -1,0 +1,11 @@
+node_modules/
+.expo/
+dist/
+.tools/
+.env
+.env.local
+*.jks
+*.keystore
+android/
+ios/
+test-results/
