@@ -1,6 +1,7 @@
 module.exports = {
   expo: {
-    name: 'Patinha Certa', slug: 'patinha-certa', scheme: 'patinhacerta', version: '1.0.0',
+    name: 'Patinha Certa', slug: 'patinha-certa', owner: 'ranielys', scheme: 'patinhacerta', version: '1.0.0',
+    extra: { eas: { projectId: '12139fe3-eb2d-47f4-8857-a5ceba75599b' } },
     orientation: 'portrait', userInterfaceStyle: 'light',
     android: { package: 'br.com.patinhacerta.app', permissions: [] },
     ios: { bundleIdentifier: 'br.com.patinhacerta.app', supportsTablet: true },
