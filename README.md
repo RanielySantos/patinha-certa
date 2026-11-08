@@ -2,6 +2,10 @@
 
 Aplicativo acadêmico de adoção responsável em JavaScript, React Native e Expo, compartilhado entre Android e web. Descoberta por cartões, favoritos, pedidos, notificações e administração com Supabase.
 
+**[Abrir aplicativo](https://ranielysantos.github.io/patinha-certa/)** · **[Baixar versões](https://github.com/RanielySantos/patinha-certa/releases)** · **[Projeto Expo](https://expo.dev/accounts/ranielys/projects/patinha-certa)**
+
+A implantação e os resultados efetivamente verificados estão em [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
 ## Executar
 
 Requer Node.js 22 LTS e npm.
@@ -103,7 +107,7 @@ Os testes SQL usam PostgreSQL embarcado (PGlite), com schemas mínimos para simu
 
 ## Limites e status da entrega
 
-As contas Supabase e Expo ainda precisam ser criadas pelo proprietário. Até a vinculação e verificação, não considere concluídos o provisionamento remoto, OAuth real, publicação web ou geração/instalação de APK. A implementação local e a configuração de implantação não comprovam esses resultados externos.
+As contas GitHub, Supabase e Expo foram vinculadas. A aplicação web está publicada e conectada ao backend, com regras de segurança e fluxos de adoção verificados por requisições reais. Consulte a página de versões para o APK. A instalação em aparelho Android físico e o login Google ainda precisam de validação; o provedor Google exige configuração adicional.
 
 Na consulta de preços realizada nesta implementação, o Supabase Free oferece 500 MB de banco, 1 GB de arquivos e pausa após uma semana de inatividade, com limite de dois projetos ativos. Consulte sempre https://supabase.com/pricing antes de publicar. Não há contratação automática de planos pagos neste projeto.
 

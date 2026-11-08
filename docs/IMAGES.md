@@ -19,4 +19,4 @@ As fotografias não retratam animais comprovadamente disponíveis em Sergipe. Os
 | Gato | photo-1495360010541-f48722b34f7d |
 | Gato | photo-1511044568932-338cba0ad803 |
 
-URL de cada arquivo: `https://images.unsplash.com/IDENTIFICADOR?auto=format&fit=crop&w=1000&q=85`. A associação exata entre anúncio e fotografia está versionada em `src/data.mjs` e `supabase/seed.sql`. Fotos externas podem ficar indisponíveis; a interface apresenta um placeholder quando isso acontece.
+URL de cada arquivo: `https://images.unsplash.com/IDENTIFICADOR?auto=format&fit=crop&w=1000&q=85`. A associação exata entre anúncio e fotografia está versionada em `src/data.mjs` e `supabase/seed.sql`. Cópias licenciadas ficam em `assets/pets`, resolvidas por `src/photos.js`, para que os anúncios demonstrativos não dependam do serviço externo durante o uso. Fotos de anúncios reais são enviadas ao Supabase Storage; a interface apresenta um placeholder quando uma foto fica indisponível.
