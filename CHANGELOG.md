@@ -4,6 +4,7 @@
 
 - Cadastro em duas etapas, com confirmação de email por código ou link e opção de reenviar a mensagem.
 - Tratamento de retornos PKCE, sessões no fragmento do link e confirmações por token hash, com erros explícitos para links expirados ou sem sessão.
+- Saída automática da confirmação quando o navegador Google já concluiu a sessão, sem exigir tocar em Voltar. Retornos equivalentes compartilham o processamento do código, e a espera possui limite e opção de nova tentativa.
 - Verificação de confirmação ao voltar ao aplicativo e opção de concluir o acesso após abrir o email.
 - Mensagens de erro dentro do formulário, botões com processamento e bloqueio de envios repetidos.
 - Skeleton na carga inicial de animais e feedback acessível de processamento.

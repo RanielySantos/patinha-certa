@@ -29,9 +29,13 @@ export function parseAuthCallback(input) {
 export function createAuthCallbackHandler(client) {
   const inFlight=new Map();
   return function handle(input){
-    if(inFlight.has(input))return inFlight.get(input);
+    let payload;
+    try{payload=parseAuthCallback(input);}catch(error){return Promise.reject(error);}
+    const key=payload.code?`code:${payload.code}`:payload.tokenHash?`hash:${payload.type}:${payload.tokenHash}`:payload.accessToken&&payload.refreshToken?`session:${payload.accessToken}:${payload.refreshToken}`:null;
+    if(!key)return Promise.reject(new Error('Este link não contém uma confirmação de acesso. Volte para entrar ou solicite um novo email.'));
+    if(inFlight.has(key))return inFlight.get(key).then(session=>({session,recovery:payload.recovery}));
     const promise=(async()=>{
-      const payload=parseAuthCallback(input);let result;
+      let result;
       if(payload.code)result=await client.auth.exchangeCodeForSession(payload.code);
       else if(payload.tokenHash) {
         if(!['signup','email','magiclink','recovery','invite','email_change'].includes(payload.type))throw new Error('Tipo de confirmação inválido. Solicite um novo email.');
@@ -40,13 +44,13 @@ export function createAuthCallbackHandler(client) {
       else throw new Error('Este link não contém uma confirmação de acesso. Volte para entrar ou solicite um novo email.');
       if(result.error)throw result.error;
       if(!result.data?.session)throw new Error('O acesso ainda não foi concluído. Entre com seu email e senha.');
-      return {session:result.data.session,recovery:payload.recovery};
+      return result.data.session;
     })();
-    inFlight.set(input,promise);
-    promise.catch(()=>inFlight.delete(input));
+    inFlight.set(key,promise);
+    promise.catch(()=>inFlight.delete(key));
     // Não manter tokens de links antigos na memória indefinidamente.
     if(inFlight.size>10)inFlight.delete(inFlight.keys().next().value);
-    return promise;
+    return promise.then(session=>({session,recovery:payload.recovery}));
   };
 }
 

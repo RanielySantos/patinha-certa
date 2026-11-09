@@ -14,6 +14,7 @@
 - Reenvio de confirmação com intervalo de espera e instruções em português.
 - Verificação ao voltar ao app quando o email e a senha ainda estão disponíveis na memória da tela. A senha não é persistida; após reiniciar, ela precisa ser informada para entrar pelo link.
 - Tratamento de PKCE, fragmentos de sessão, token hash, links expirados e recuperação de senha. Um callback só indica sucesso quando uma sessão foi estabelecida.
+- Retorno automático à tela principal se a sessão já tiver sido estabelecida pelo navegador Google. URLs equivalentes do mesmo código não geram duas trocas, e a tela de confirmação oferece recuperação se houver demora.
 - Botões bloqueados durante operações, rótulos de processamento, erros acessíveis dentro do formulário e skeleton para a carga inicial dos animais.
 - Pré-verificação do provedor Google para mostrar uma mensagem no aplicativo enquanto a configuração OAuth estiver pendente.
 - Templates de confirmação e recuperação em português. O de confirmação inclui código e link.
@@ -21,8 +22,8 @@
 ## Validação
 
 - Oito testes automatizados de domínio, banco e processamento de callbacks passaram.
-- Oito testes de interface de autenticação passaram em desktop e celular, com respostas controladas para reproduzir cadastro, OTP inválido, confirmação válida, login após link, senha incorreta e Google desabilitado.
-- Esses testes de interface não comprovam a entrega de email nem um login Google real. O proprietário configurou o cliente OAuth no Supabase; a configuração pública já informa o Google como ativo. O login completo com uma conta Google autorizada ainda precisa ser testado no aplicativo.
+- Doze testes de interface de autenticação passaram em desktop e celular, com respostas controladas para reproduzir cadastro, OTP inválido, confirmação válida, login após link, senha incorreta, Google desabilitado, sessão estabelecida antes do callback e callback sem sessão.
+- Esses testes de interface não comprovam a entrega de email. O proprietário configurou o cliente OAuth e confirmou que a autenticação Google entra na conta, mas relatou que o retorno permanecia na confirmação na versão instalada. A saída automática foi corrigida e precisa de reteste no aparelho com o APK atualizado.
 
 ## Atualização do aplicativo
 

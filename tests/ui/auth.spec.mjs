@@ -54,3 +54,17 @@ test('erros de login e Google desabilitado aparecem dentro do formulário',async
 test('callback expirado não fecha como se o cadastro tivesse funcionado',async({page})=>{
  await mockBackend(page);await page.goto('/auth/callback#error=access_denied&error_code=otp_expired&error_description=Expired');await expect(page.getByRole('alert')).toContainText('expirou ou já foi utilizado');await expect(page.getByRole('button',{name:'Voltar para entrar ou solicitar novo email'})).toBeVisible();
 });
+test('callback com sessão já concluída sai da confirmação sem exigir Voltar',async({page})=>{
+ await mockBackend(page,{token:route=>route.fulfill({json:session()})});
+ await openAuth(page);await page.getByRole('textbox',{name:'Email',exact:true}).fill(user.email);await page.getByRole('textbox',{name:'Senha',exact:true}).fill('uma-senha-segura');await page.getByRole('button',{name:'Entrar',exact:true}).click();
+ await expect(page.getByText('Olá, Adotante!')).toBeVisible();
+ await page.goto('/auth/callback');
+ await expect(page).toHaveURL('http://127.0.0.1:4174/');
+ await expect(page.getByText('Confirmando seu acesso…',{exact:true})).toHaveCount(0);
+ await page.getByLabel('Abrir perfil').click();await expect(page.getByText('Olá, Adotante!')).toBeVisible();
+});
+test('callback sem sessão oferece recuperação em vez de ficar carregando',async({page})=>{
+ await mockBackend(page);await page.goto('/auth/callback');
+ await expect(page.getByRole('alert')).toContainText('Não recebemos uma confirmação');
+ await expect(page.getByRole('button',{name:'Tentar concluir novamente'})).toBeVisible();
+});

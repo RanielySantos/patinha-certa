@@ -9,7 +9,7 @@
 - Downloads e versões: https://github.com/RanielySantos/patinha-certa/releases/tag/v1.0.2
 - APK Android: https://github.com/RanielySantos/patinha-certa/releases/download/v1.0.2/patinha-certa-v1.0.2.apk
 
-A versão 1.0.2 corrige o processamento dos retornos de autenticação, adiciona a etapa de confirmação de email por código ou link e melhora mensagens e carregamento. O Android utiliza `versionCode` 3. O Supabase informa o Google como ativo após a configuração feita pelo proprietário; o login completo com uma conta Google ainda precisa ser validado. Consulte [a validação de autenticação](AUTH_VALIDATION.md).
+A versão 1.0.2 corrige o processamento dos retornos de autenticação, adiciona a etapa de confirmação de email por código ou link e melhora mensagens e carregamento. O Android utiliza `versionCode` 3. O proprietário confirmou que a autenticação Google entra na conta; a navegação automática após o retorno foi corrigida nesta versão e precisa de reteste no aparelho. Consulte [a validação de autenticação](AUTH_VALIDATION.md).
 
 ### Histórico da versão 1.0.1
 
@@ -35,7 +35,7 @@ O backend está na região `sa-east-1` (São Paulo). O banco contém 18 anúncio
 
 Cadastre sua conta no aplicativo e confirme o email. Para conceder administração, o proprietário do banco deve seguir a instrução SQL no README. Não existe senha de administrador padrão ou publicada.
 
-O proprietário configurou o Client ID e o secret do Google Cloud no provedor Supabase, que já aparece como ativo. O login completo com uma conta Google não foi declarado como validado. O envio de confirmação e recuperação de senha para usuários externos à organização pode exigir SMTP próprio devido às restrições do serviço de email padrão do Supabase. Não foram desativadas as confirmações de email.
+O proprietário configurou o Client ID e o secret do Google Cloud no provedor Supabase, que já aparece como ativo, e confirmou a autenticação da conta Google. A saída automática da tela de confirmação deve ser revalidada no aparelho com esta atualização. O envio de confirmação e recuperação de senha para usuários externos à organização pode exigir SMTP próprio devido às restrições do serviço de email padrão do Supabase. Não foram desativadas as confirmações de email.
 
 O aplicativo não foi instalado em um aparelho Android físico nesta sessão. A validação visual em celular foi feita em navegador com viewport móvel; a compilação Android não substitui o teste de instalação e dos callbacks em um aparelho real.
 

@@ -11,7 +11,7 @@ test('retorno aceita PKCE, sessão no fragmento e recuperação, rejeitando erro
 test('callback consome uma única vez o mesmo código e exige uma sessão válida',async()=>{
  let calls=0;const client={auth:{exchangeCodeForSession:async code=>{calls++;assert.equal(code,'abc');return {data:{session:{user:{id:'u'}}},error:null};}}};
  const handler=createAuthCallbackHandler(client);
- const results=await Promise.all([handler('patinhacerta://auth/callback?code=abc'),handler('patinhacerta://auth/callback?code=abc')]);
+ const results=await Promise.all([handler('patinhacerta://auth/callback?code=abc'),handler('patinhacerta://auth/callback?type=signup&code=abc')]);
  assert.equal(calls,1);assert.equal(results[0].session.user.id,'u');
  await assert.rejects(handler('patinhacerta://auth/callback'),/não contém/);
  const noSession=createAuthCallbackHandler({auth:{exchangeCodeForSession:async()=>({data:{session:null},error:null})}});
