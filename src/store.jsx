@@ -3,7 +3,8 @@ import { AppState, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-import { supabase, unwrap } from './backend';
+import { supabase, unwrap, completeAuthCallback, googleProviderEnabled } from './backend';
+import {validateCredentials} from './auth.mjs';
 import { animals as demoAnimals } from './data.mjs';
 import { canTransition, activeStatuses } from './domain.mjs';
 const Context = createContext();
@@ -15,6 +16,8 @@ export function AppProvider({ children }) {
   const [favorites,setFavorites] = useState([]), [requests,setRequests] = useState([]), [notifications,setNotifications] = useState([]);
   const [loading,setLoading] = useState(true), [error,setError] = useState('');
   const [demoReady,setDemoReady] = useState(false);
+  const [authNotice,setAuthNotice] = useState(null);
+  const notifyAuth=message=>setAuthNotice({id:Date.now(),message});
   const mounted = useRef(true);
   async function refresh() {
     if (!supabase) return;
@@ -88,13 +91,28 @@ export function AppProvider({ children }) {
   const callback = () => Platform.OS==='web' ? `${window.location.origin}${process.env.EXPO_BASE_URL||''}/auth/callback` : Linking.createURL('auth/callback');
   async function signIn(email,password,signup,name) {
     if(!supabase)throw new Error('Use “Experimentar demonstração”. O login real depende da conexão ao Supabase.');
-    if(signup) {const d=unwrap(await supabase.auth.signUp({email,password,options:{data:{name},emailRedirectTo:callback()}}));return d.session?'Conta criada.':'Confira seu email para confirmar a conta.';}
-    unwrap(await supabase.auth.signInWithPassword({email,password}));return 'Você entrou!';
+    validateCredentials(email,password,name||'',signup);email=email.trim().toLowerCase();
+    if(signup) {const d=unwrap(await supabase.auth.signUp({email,password,options:{data:{name:name.trim()},emailRedirectTo:callback()}}));
+      if(d.user?.identities?.length===0)return {status:'existing_account',email};
+      return {status:d.session?'signed_in':'confirmation_required',email};
+    }
+    unwrap(await supabase.auth.signInWithPassword({email,password}));return {status:'signed_in',email};
+  }
+  async function verifyEmail(email,token){
+    if(!supabase)throw new Error('Conecte o serviço de autenticação para confirmar seu email.');
+    if(!/^\d{6,8}$/.test(token.trim()))throw new Error('Digite o código numérico recebido no email.');
+    unwrap(await supabase.auth.verifyOtp({email:email.trim().toLowerCase(),token:token.trim(),type:'signup'}));
+  }
+  async function resendConfirmation(email){
+    if(!supabase)throw new Error('Conecte o serviço de autenticação para reenviar o email.');
+    unwrap(await supabase.auth.resend({type:'signup',email:email.trim().toLowerCase(),options:{emailRedirectTo:callback()}}));
   }
   async function google() {
     if(!supabase)throw new Error('O login Google precisa do backend e do provedor OAuth configurados.');
+    if(!await googleProviderEnabled()){const error=new Error('O acesso com Google ainda não foi ativado.');error.code='provider_disabled';throw error;}
     const redirectTo=callback();const data=unwrap(await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo,skipBrowserRedirect:Platform.OS!=='web'}}));
-    if(Platform.OS!=='web') {const r=await WebBrowser.openAuthSessionAsync(data.url,redirectTo);if(r.type==='success'){const code=new URL(r.url).searchParams.get('code');if(code)unwrap(await supabase.auth.exchangeCodeForSession(code));}}
+    if(Platform.OS!=='web') {const r=await WebBrowser.openAuthSessionAsync(data.url,redirectTo);if(r.type==='success'){await completeAuthCallback(r.url);return {status:'signed_in'};}return {status:'cancelled'};}
+    return {status:'redirecting'};
   }
   async function reset(email) {if(!supabase)throw new Error('Conecte o Supabase para recuperar senhas.');unwrap(await supabase.auth.resetPasswordForEmail(email,{redirectTo:callback()+'?recovery=1'}));}
   async function saveAnimal(values,photos,id) {
@@ -105,5 +123,5 @@ export function AppProvider({ children }) {
     const payload={...values,species_id:species.id,breed_id:breed.id};delete payload.species;delete payload.breed;
     unwrap(await supabase.rpc('save_animal',{p_id:id||null,p_data:payload,p_photos:photos}));await refresh();
   }
-  return <Context.Provider value={{animals,user,profile,favorites,requests,notifications,loading,error,demo:!supabase,refresh,favorite,request,transition,markRead,saveProfile,signOut,enterDemo,signIn,google,reset,saveAnimal}}>{children}</Context.Provider>;
+  return <Context.Provider value={{animals,user,profile,favorites,requests,notifications,loading,error,authNotice,notifyAuth,demo:!supabase,refresh,favorite,request,transition,markRead,saveProfile,signOut,enterDemo,signIn,verifyEmail,resendConfirmation,google,reset,saveAnimal}}>{children}</Context.Provider>;
 }

@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body style="margin:0;background:#F8F8F3;font-family:Arial,sans-serif;color:#223A33;padding:24px">
+  <main style="max-width:520px;margin:auto;background:white;padding:32px;border-radius:20px">
+    <h1 style="font-size:26px;color:#20594B">Patinha Certa</h1>
+    <h2 style="font-size:22px">Falta só confirmar seu email</h2>
+    <p style="line-height:1.6">Volte ao aplicativo e digite este código na etapa de confirmação:</p>
+    <p style="font-size:32px;letter-spacing:6px;font-weight:bold;color:#20594B;background:#EAF1E9;padding:20px;text-align:center;border-radius:12px">{{ .Token }}</p>
+    <p style="line-height:1.6">Você também pode confirmar pelo botão abaixo. Depois, retorne ao aplicativo e toque em <strong>Já confirmei pelo link</strong>, se o acesso não for concluído automaticamente.</p>
+    <p style="margin:28px 0"><a href="{{ .ConfirmationURL }}" style="background:#20594B;color:white;padding:15px 24px;text-decoration:none;border-radius:10px;display:inline-block">Confirmar meu email</a></p>
+    <p style="font-size:13px;color:#78847C;line-height:1.6">O código é temporário e só pode ser utilizado uma vez. Não compartilhe este email ou código. Se você não iniciou este cadastro, ignore a mensagem.</p>
+  </main>
+</body></html>
