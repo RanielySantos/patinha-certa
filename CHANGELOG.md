@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## 1.0.3 — 11 de novembro de 2026
+
+- Campo Raça digitável, permitindo cadastrar qualquer raça.
+- Autocomplete baseado nos animais cadastrados, filtrado pela espécie e sem distinguir acentos ou maiúsculas.
+- Limpeza da raça ao trocar a espécie, evitando manter a raça do tipo de animal anterior.
+- Salvamento de novas raças com reutilização por espécie e proteção administrativa no banco.
+- Android `versionCode` 4.
+
 ## 1.0.2 — 8 de novembro de 2026
 
 - Cadastro em duas etapas, com confirmação de email por código ou link e opção de reenviar a mensagem.

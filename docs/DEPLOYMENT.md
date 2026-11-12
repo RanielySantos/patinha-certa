@@ -1,13 +1,23 @@
 # Implantação e verificação
 
+## Atualização 1.0.3
+
+Preparada em 11 de novembro de 2026 para web e Android (versionCode 4).
+
+- Raça digitável com sugestões dos animais cadastrados, restritas à espécie selecionada.
+- Migração 202611120001_free_text_breeds.sql aplicada ao projeto de produção jcrafbthmwylzryujkyv e função conferida remotamente.
+- As migrações antigas já estavam refletidas no banco, mas não estavam registradas no histórico da CLI; foi executado somente o arquivo da nova migração.
+- Nove testes automatizados passaram; exportação web concluída antes do preparo da versão.
+- A publicação web é acionada pelo envio à branch main; o APK é gerado no perfil preview do Expo. Consulte os resultados no GitHub Actions e na release v1.0.3.
+
 ## Serviços publicados
 
 - Código: https://github.com/RanielySantos/patinha-certa
 - Aplicação web: https://ranielysantos.github.io/patinha-certa/
 - Supabase: https://supabase.com/dashboard/project/jcrafbthmwylzryujkyv
 - Expo: https://expo.dev/accounts/ranielys/projects/patinha-certa
-- Downloads e versões: https://github.com/RanielySantos/patinha-certa/releases/tag/v1.0.2
-- APK Android: https://github.com/RanielySantos/patinha-certa/releases/download/v1.0.2/patinha-certa-v1.0.2.apk
+- Downloads e versões: https://github.com/RanielySantos/patinha-certa/releases/tag/v1.0.3
+- APK Android: https://github.com/RanielySantos/patinha-certa/releases/download/v1.0.3/patinha-certa-v1.0.3.apk
 
 A versão 1.0.2 corrige o processamento dos retornos de autenticação, adiciona a etapa de confirmação de email por código ou link e melhora mensagens e carregamento. O Android utiliza `versionCode` 3. O proprietário confirmou que a autenticação Google entra na conta; a navegação automática após o retorno foi corrigida nesta versão e precisa de reteste no aparelho. Consulte [a validação de autenticação](AUTH_VALIDATION.md).
 

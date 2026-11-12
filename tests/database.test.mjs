@@ -9,6 +9,7 @@ test('PostgreSQL: migração, RLS, duplicidade, aprovação e notificações',as
  try{
  await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,raw_user_meta_data jsonb default '{}');create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid; $$;grant usage on schema auth to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text);alter table storage.objects enable row level security;create function storage.foldername(text) returns text[] language sql as $$ select string_to_array($1,'/'); $$;create publication supabase_realtime;`);
  await db.exec(readFileSync(new URL('../supabase/migrations/202611080001_initial.sql',import.meta.url),'utf8'));
+ await db.exec(readFileSync(new URL('../supabase/migrations/202611120001_free_text_breeds.sql',import.meta.url),'utf8'));
  await db.exec(readFileSync(new URL('../supabase/seed.sql',import.meta.url),'utf8'));
  await db.exec(`insert into auth.users(id,raw_user_meta_data) values('${admin}','{"name":"Admin"}'),('${u1}','{"name":"Um","role":"admin"}'),('${u2}','{"name":"Dois"}');update profiles set role='admin' where id='${admin}';`);
  assert.equal((await db.query('select count(*)::int n from animals')).rows[0].n,18);
@@ -24,6 +25,17 @@ test('PostgreSQL: migração, RLS, duplicidade, aprovação e notificações',as
  await login(u2);assert.equal((await db.query('select * from adoption_requests')).rows.length,0);
  await assert.rejects(db.query('select transition_adoption($1,$2)',[r1,'cancelled']),/seus pedidos/);
  const r2=(await db.query('select submit_adoption($1,$2,$3) id',[animal,'outro contato','Também tenho condições de cuidar.'])).rows[0].id;
+ await assert.rejects(db.query('select save_animal($1,$2,$3)',[null,{},[]]),/administrativo/);
+ await login(admin);
+ const payload={name:'Teste',species_id:1,breed_name:'  Samoieda  ',age_months:12,size:'Médio',sex:'Fêmea',description:'Animal de teste para cadastro.',city:'Aracaju',status:'available',responsible:'Equipe',vaccinated:false,neutered:false,demo:true};
+ const saved=(await db.query('select save_animal($1,$2,$3) id',[null,payload,['https://example.com/photo.jpg']])).rows[0].id;
+ assert.equal((await db.query('select b.name,b.species_id from animals a join breeds b on b.id=a.breed_id where a.id=$1',[saved])).rows[0].name,'Samoieda');
+ await db.query('select save_animal($1,$2,$3)',[saved,{...payload,breed_name:'samoieda'},['https://example.com/photo.jpg']]);
+ assert.equal((await db.query("select count(*)::int n from breeds where lower(name)='samoieda'")).rows[0].n,1);
+ await assert.rejects(db.query('select save_animal($1,$2,$3)',[saved,{...payload,breed_name:'  '},['https://example.com/photo.jpg']]),/Informe a raça/);
+ await db.exec('reset role');
+ await db.query('delete from animal_photos where animal_id=$1',[saved]);
+ await db.query('delete from animals where id=$1',[saved]);
  await login(admin);
  const decisions=await Promise.allSettled([db.query('select transition_adoption($1,$2)',[r1,'approved']),db.query('select transition_adoption($1,$2)',[r2,'approved'])]);
  assert.equal(decisions.filter(d=>d.status==='fulfilled').length,1);

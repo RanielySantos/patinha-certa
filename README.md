@@ -1,8 +1,8 @@
-# Patinha Certa · versão 1.0.2
+# Patinha Certa · versão 1.0.3
 
 Aplicativo de adoção em JavaScript, React Native e Expo, compartilhado entre Android e web. Descoberta por cartões, favoritos, pedidos, notificações e administração com Supabase.
 
-**[Abrir aplicativo](https://ranielysantos.github.io/patinha-certa/)** · **[Baixar APK Android](https://github.com/RanielySantos/patinha-certa/releases/download/v1.0.2/patinha-certa-v1.0.2.apk)** · **[Código-fonte e versões](https://github.com/RanielySantos/patinha-certa/releases/tag/v1.0.2)** · **[Projeto Expo](https://expo.dev/accounts/ranielys/projects/patinha-certa)**
+**[Abrir aplicativo](https://ranielysantos.github.io/patinha-certa/)** · **[Baixar APK Android](https://github.com/RanielySantos/patinha-certa/releases/download/v1.0.3/patinha-certa-v1.0.3.apk)** · **[Código-fonte e versões](https://github.com/RanielySantos/patinha-certa/releases/tag/v1.0.3)** · **[Projeto Expo](https://expo.dev/accounts/ranielys/projects/patinha-certa)**
 
 A implantação e os resultados efetivamente verificados estão em [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 

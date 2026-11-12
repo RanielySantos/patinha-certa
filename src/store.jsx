@@ -118,9 +118,9 @@ export function AppProvider({ children }) {
   async function saveAnimal(values,photos,id) {
     if(profile?.role!=='admin'||!supabase)throw new Error('Acesso administrativo necessário.');
     const species=unwrap(await supabase.from('species').select('id').eq('name',values.species).single());
-    const breed=unwrap(await supabase.from('breeds').select('id').eq('name',values.breed).eq('species_id',species.id).maybeSingle());
-    if(!breed)throw new Error('Selecione uma raça cadastrada para a espécie.');
-    const payload={...values,species_id:species.id,breed_id:breed.id};delete payload.species;delete payload.breed;
+    const breedName=values.breed.trim();
+    if(!breedName)throw new Error('Informe a raça ou use Sem raça definida.');
+    const payload={...values,species_id:species.id,breed_name:breedName};delete payload.species;delete payload.breed;
     unwrap(await supabase.rpc('save_animal',{p_id:id||null,p_data:payload,p_photos:photos}));await refresh();
   }
   return <Context.Provider value={{animals,user,profile,favorites,requests,notifications,loading,error,authNotice,notifyAuth,demo:!supabase,refresh,favorite,request,transition,markRead,saveProfile,signOut,enterDemo,signIn,verifyEmail,resendConfirmation,google,reset,saveAnimal}}>{children}</Context.Provider>;
